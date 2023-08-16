@@ -27,17 +27,18 @@ import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
+import { SearchListHead, SearchListToolbar } from '../sections/@dashboard/searches';
 // mock
-import USERLIST from '../_mock/user';
+import DialogNewSearch from "../components/formSearch/components/dialogs/DialogNewSearch";
+import {useSelector} from "react-redux";
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
-  { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
+  { id: 'name', label: 'Nome', alignRight: false },
+  { id: 'company', label: 'Código', alignRight: false },
+  { id: 'role', label: 'Cidade', alignRight: false },
+  { id: 'isVerified', label: 'Estado', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: '' },
 ];
@@ -73,7 +74,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function UserPage() {
+export default function SearchsList() {
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -88,9 +89,13 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const [openDialogNewSearch, setOpenDialogNewSearch] = useState(false);
+
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
   };
+
+  const searchs = useSelector(state => state.formSearch.searchs);
 
   const handleCloseMenu = () => {
     setOpen(null);
@@ -104,7 +109,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = searchs.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -140,71 +145,76 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+  const handleCloseDialogNewSearch = () => {
+    setOpenDialogNewSearch(false);
+  }
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - searchs.length) : 0;
 
-  const isNotFound = !filteredUsers.length && !!filterName;
+  const filteredSearchs = applySortFilter(searchs, getComparator(order, orderBy), filterName);
+
+  const isNotFound = !filteredSearchs.length && !!filterName;
 
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> Pesquisas | IPOPE </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            Pesquisas
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New User
+          <Button onClick={()=>{setOpenDialogNewSearch(true)}} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+            Nova pesquisa
           </Button>
         </Stack>
 
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <SearchListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
-                <UserListHead
+                <SearchListHead
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={searchs.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
+                  {filteredSearchs.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                    const { id, name, code, city, state, status } = row;
                     const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
                       <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         <TableCell padding="checkbox">
+                          {/*
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
+                            */}
                         </TableCell>
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
                             <Typography variant="subtitle2" noWrap>
                               {name}
                             </Typography>
                           </Stack>
                         </TableCell>
 
-                        <TableCell align="left">{company}</TableCell>
+                        <TableCell align="left">{code || '***'}</TableCell>
 
-                        <TableCell align="left">{role}</TableCell>
+                        <TableCell align="left">{city}</TableCell>
 
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                        <TableCell align="left">{state}</TableCell>
 
                         <TableCell align="left">
-                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
+                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase( status || 'Pendente')}</Label>
                         </TableCell>
 
                         <TableCell align="right">
@@ -252,7 +262,7 @@ export default function UserPage() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={searchs.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -279,7 +289,7 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem>
+        <MenuItem >
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Edit
         </MenuItem>
@@ -289,6 +299,11 @@ export default function UserPage() {
           Delete
         </MenuItem>
       </Popover>
+
+      <DialogNewSearch
+          open={openDialogNewSearch}
+          handleClose={handleCloseDialogNewSearch}
+      />
     </>
   );
 }

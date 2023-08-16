@@ -91,11 +91,12 @@ import {
 
     useEffect(() => {
         setStatusTypeSelected(false);
+        setNewField({});
     }, [open]);
 
     useEffect(() => {
         if(fieldEdit){
-            setNewField(fieldEdit);
+            setNewField({...fieldEdit});
             setTypeSelected({dataType: fieldEdit.dataType});
             setStatusTypeSelected(true);
         }

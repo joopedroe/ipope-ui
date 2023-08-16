@@ -4,5 +4,6 @@ export default ({
         description: '',
         city: '',
         sections:[]
-    }
+    },
+    searchs:[]
  });

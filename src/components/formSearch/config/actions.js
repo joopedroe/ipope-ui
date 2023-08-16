@@ -10,3 +10,8 @@ export const setNewField = data => ({
     type: types.SET_NEW_FIELD,
     payload: data
 });
+
+export const setSearchs = data => ({
+    type: types.SET_SEARCHS,
+    payload: data
+});

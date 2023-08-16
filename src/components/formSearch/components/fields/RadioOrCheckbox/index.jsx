@@ -30,9 +30,18 @@ const QuestionCreator = ({ type, setNewField, field }) => {
 
 
   const handleOptionChange = (event, index) => {
-    const updatedOptions = [...options];
-    updatedOptions[index].value = event.target.value;
-    setOptions(updatedOptions);
+    //const updatedOptions = [...options];
+    //console.log('updatedOptions', updatedOptions);
+    //updatedOptions[index].value = event.target.value;
+
+    const updatedOptions = options.map((option, indexmap) => {
+      console.log('option', indexmap, index);
+        if (indexmap === index) {
+            return { ...option, value: event.target.value};
+        }
+        return option;
+    });
+    setOptions([...updatedOptions]);
     setNewField({ ...field, options: updatedOptions });
   };
 
@@ -62,9 +71,10 @@ const QuestionCreator = ({ type, setNewField, field }) => {
   }, [question, options]);
 
   useEffect(() => {
+    const fields = field.options ? field.options.map(field => field) : [{ id: 0, value: '' }];
     if (field) {
       setQuestion(field.question || '');
-      setOptions(field.options || []);
+      setOptions(fields);
     }
   }, []);
 

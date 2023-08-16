@@ -11,3 +11,10 @@ export const SET_NEW_FIELD = (state, action) => {
         field: state.field,
     });
 }
+
+export const SET_SEARCHS = (state, action) => {
+    return ({
+        ...state,
+        searchs: action.payload,
+    });
+}

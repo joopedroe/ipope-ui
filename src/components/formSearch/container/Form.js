@@ -37,7 +37,6 @@ export const Form = (props) => {
     const [fieldEdit, setFieldEdit] = useState(null);
 
     const search = useSelector(state => state.formSearch.search);
-    console.log('search', search);
     const dispatch = useDispatch()
 
     const onSetFormSearch = (searchUpdated) => {
@@ -79,12 +78,29 @@ export const Form = (props) => {
     const addField = (data) => {
         const searchUpdated = { ...search };
         if(data.id) {
-            console.log('edit');
-            console.log(data);
             const sectionIndex = searchUpdated.sections.findIndex((section) => section.id === data.sectionId);
-            const fieldIndex = searchUpdated.sections[sectionIndex].fields.findIndex((field) => field.id === data.id);
-            searchUpdated.sections[sectionIndex].fields[fieldIndex] = data;
-            onSetFormSearch(searchUpdated);
+            const newSearch = {
+                ...searchUpdated,
+                sections: searchUpdated.sections.map((section) => {
+                    if (section.id === data.sectionId) {
+                        return {
+                            ...section,
+                            fields: searchUpdated.sections[sectionIndex].fields.map((field) => {
+                                if (field.id === data.id) {
+                                    console.log('field edit', data);
+                                    return {
+                                        ...field,
+                                        ...data
+                                    }
+                                }
+                                return field;
+                            })
+                        }
+                    }
+                    return section;
+                })
+            }
+            onSetFormSearch(newSearch);
             setFieldEdit(null);
             return;
         }
@@ -94,10 +110,22 @@ export const Form = (props) => {
             ...data
         };
         const sectionIndex = searchUpdated.sections.findIndex((section) => section.id === sectionIdSelected);
-        console.log(sectionIndex);
         if (sectionIndex >= 0) {
-            searchUpdated.sections[sectionIndex].fields.push(newField);
-            onSetFormSearch(searchUpdated);
+            console.log('add field');
+            const newSearch = {
+                ...searchUpdated,
+                sections: searchUpdated.sections.map((section) => {
+                    if (section.id === sectionIdSelected) {
+                        return {
+                            ...section,
+                            fields: [...section.fields, newField]
+                        }
+                    }
+                    return section;
+                })
+
+            }
+            onSetFormSearch(newSearch);
         }
     };
 
