@@ -1,6 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 // @mui
 import {
@@ -31,6 +32,7 @@ import { SearchListHead, SearchListToolbar } from '../sections/@dashboard/search
 // mock
 import DialogNewSearch from "../components/formSearch/components/dialogs/DialogNewSearch";
 import {useSelector} from "react-redux";
+
 
 // ----------------------------------------------------------------------
 
@@ -91,8 +93,13 @@ export default function SearchsList() {
 
   const [openDialogNewSearch, setOpenDialogNewSearch] = useState(false);
 
-  const handleOpenMenu = (event) => {
+  const [idSearch, setIdSearch] = useState(null);
+
+  const navigate = useNavigate();
+
+  const handleOpenMenu = (event, id) => {
     setOpen(event.currentTarget);
+    setIdSearch(id);
   };
 
   const searchs = useSelector(state => state.formSearch.searchs);
@@ -147,6 +154,11 @@ export default function SearchsList() {
 
   const handleCloseDialogNewSearch = () => {
     setOpenDialogNewSearch(false);
+  }
+
+  const editSearch = () => {
+    console.log(idSearch);
+    navigate(`/dashboard/searchs/edit/${idSearch}`);
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - searchs.length) : 0;
@@ -218,7 +230,7 @@ export default function SearchsList() {
                         </TableCell>
 
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                          <IconButton size="large" color="inherit" onClick={(event)=> {handleOpenMenu(event,id)}}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
@@ -289,14 +301,14 @@ export default function SearchsList() {
           },
         }}
       >
-        <MenuItem >
+        <MenuItem onClick={editSearch}>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Edit
+          Editar
         </MenuItem>
 
         <MenuItem sx={{ color: 'error.main' }}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-          Delete
+          Excluir
         </MenuItem>
       </Popover>
 

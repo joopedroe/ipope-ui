@@ -53,6 +53,7 @@ const QuestionCreator = ({ type, setNewField, field }) => {
   const handleRemoveOption = (index) => {
     const updatedOptions = options.filter((option) => option.id !== index);
     setOptions(updatedOptions);
+    setNewField({ ...field, options: updatedOptions });
   };
 
   const handleOptionSelect = (event) => {

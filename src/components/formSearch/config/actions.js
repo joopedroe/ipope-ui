@@ -15,3 +15,12 @@ export const setSearchs = data => ({
     type: types.SET_SEARCHS,
     payload: data
 });
+
+
+export const getSearchById = (id) => (
+    async (dispatch, getState) => {
+        const searchs = getState().formSearch.searchs;
+        const search = searchs.find(s => s.id === id);
+        dispatch(setFormSearch(search));
+    }
+);

@@ -69,9 +69,14 @@ const CreateSurveyDialog = ({open, handleClose}) => {
     };
 
     const handleCreateSurvey = () => {
+        const id = (searchs.length + 1).toString();
         const searchList = [
             ...searchs,
-            formData
+            {
+                ...formData,
+                id,
+                sections: [],
+            }
         ]
         dispatch(setSearchs(searchList));
         handleClose();

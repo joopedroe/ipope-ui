@@ -1,8 +1,8 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { Button as ButtonAntd } from 'antd';
-import { faPenToSquare } from '@fortawesome/free-regular-svg-icons';
+import { faPenToSquare, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -23,11 +23,11 @@ import {
     Unstable_Grid2 as Grid
 } from '@mui/material';
 import Icon from '../../iconify';
-import { setFormSearch } from '../config/actions'
+import { setFormSearch, getSearchById } from '../config/actions'
 import DialogSection from '../components/dialogs/DialogSection';
 import DialogTypeField from '../components/dialogs/DialogTypeField';
 import { InputActions } from './style';
-import { render } from 'react-dom';
+import { useParams } from 'react-router-dom';
 
 
 export const Form = (props) => {
@@ -38,6 +38,7 @@ export const Form = (props) => {
 
     const search = useSelector(state => state.formSearch.search);
     const dispatch = useDispatch()
+    const { id } = useParams();
 
     const onSetFormSearch = (searchUpdated) => {
         console.log(searchUpdated);
@@ -128,6 +129,13 @@ export const Form = (props) => {
             onSetFormSearch(newSearch);
         }
     };
+
+    useEffect(() => {
+        if(id){
+            console.log('id', id);
+            dispatch(getSearchById(id));
+        }
+    }, [])
 
 
     const onOpenDialogSection = () => {
@@ -226,8 +234,8 @@ export const Form = (props) => {
             <form onSubmit={handleSubmit}>
                 <Card>
                     <CardHeader
-                        subheader="Lavandeira, TO"
-                        title="Nome da pesquisa"
+                        subheader={`${search.city} - ${search.state}`}
+                        title={search.name}
                     />
                     <Divider />
                     <CardContent>
@@ -249,9 +257,7 @@ export const Form = (props) => {
                                             </Grid>
                                             <Grid item xs={1}>
                                                 <IconButton onClick={() => removeSection(section.id)} size="small">
-                                                    <SvgIcon fontSize='small'>
-                                                        <Icon icon="material-symbols:restore-from-trash" />
-                                                    </SvgIcon>
+                                                    <FontAwesomeIcon icon={faTrashAlt} />
                                                 </IconButton>
                                             </Grid>
                                             <Grid item xs={12} sx={{ padding: '0px 24px' }}>
@@ -310,7 +316,7 @@ export const Form = (props) => {
                     <Divider />
                     <CardActions sx={{ justifyContent: 'flex-end' }}>
                         <Button variant="contained">
-                            Save
+                            Salvar
                         </Button>
                     </CardActions>
                 </Card>

@@ -21,7 +21,7 @@ export default function Router() {
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'searchs', element: <SearchsList /> },
-        { path: 'new-search', element: <NewSearch /> },
+        { path: 'searchs/edit/:id', element: <NewSearch /> },
         { path: 'blog', element: <BlogPage /> },
       ],
     },
