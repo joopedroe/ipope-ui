@@ -5,5 +5,5 @@ export default ({
         city: '',
         sections:[]
     },
-    searchs:[]
+    searches:[]
  });

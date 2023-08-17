@@ -1,5 +1,6 @@
 
 import types from './constants';
+import  {getListSearches, createSearch, getSearchById} from '../../../services/search';
 
 export const setFormSearch = data => ({
     type: types.SET_FORM_SEARCH,
@@ -11,16 +12,33 @@ export const setNewField = data => ({
     payload: data
 });
 
-export const setSearchs = data => ({
-    type: types.SET_SEARCHS,
+export const setSearches = data => ({
+    type: types.SET_SEARCHES,
     payload: data
 });
 
 
-export const getSearchById = (id) => (
+export const getSearch = (id) => (
     async (dispatch, getState) => {
-        const searchs = getState().formSearch.searchs;
-        const search = searchs.find(s => s.id === id);
-        dispatch(setFormSearch(search));
+
+        const response = await getSearchById(id);
+        dispatch(setFormSearch({...response.data, sections:[]}));
+    }
+);
+
+export const getSearches = () => (
+    async (dispatch, getState) => {
+        const response = await getListSearches();
+        dispatch(setSearches(response.data||[]));
+    }
+);
+
+export const createNewSearch = (params) => (
+    async (dispatch, getState) => {
+        const state = getState();
+        const searches = state.formSearch.searches;
+        const response = await createSearch(params);
+        console.log(response);
+        dispatch(setSearches([...searches, {...params, id:response.data}]));
     }
 );

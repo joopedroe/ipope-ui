@@ -4,7 +4,7 @@ import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
 import BlogPage from './pages/BlogPage';
-import SearchsList from './pages/SearchsList';
+import SearchesList from './pages/SearchsList';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import NewSearch from './pages/search/NewSearch';
@@ -20,8 +20,8 @@ export default function Router() {
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
-        { path: 'searchs', element: <SearchsList /> },
-        { path: 'searchs/edit/:id', element: <NewSearch /> },
+        { path: 'searches', element: <SearchesList /> },
+        { path: 'searches/edit/:id', element: <NewSearch /> },
         { path: 'blog', element: <BlogPage /> },
       ],
     },

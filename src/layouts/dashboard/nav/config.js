@@ -13,7 +13,7 @@ const navConfig = [
   },
   {
     title: 'Pesquisas',
-    path: '/dashboard/searchs',
+    path: '/dashboard/searches',
     icon: icon('ic_user'),
   },
 ];
