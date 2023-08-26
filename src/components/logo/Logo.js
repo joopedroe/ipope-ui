@@ -37,7 +37,7 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
       }}
       {...other}
     >
-      <img src='/assets/images/logo/image-ipope.png' alt="logo" style={{ width: '100%', height: '100%' }} />
+      <img src='/assets/images/logo/image-ipope.jpeg' alt="logo" style={{ width: '100%', height: '100%' }} />
     </Box>
   );
 
