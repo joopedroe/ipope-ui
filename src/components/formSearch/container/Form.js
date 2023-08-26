@@ -23,7 +23,7 @@ import {
     Unstable_Grid2 as Grid
 } from '@mui/material';
 import Icon from '../../iconify';
-import { setFormSearch, getSearch } from '../config/actions'
+import { setFormSearch, getSearch, updateSearch } from '../config/actions'
 import DialogSection from '../components/dialogs/DialogSection';
 import DialogTypeField from '../components/dialogs/DialogTypeField';
 import { InputActions } from './style';
@@ -41,8 +41,11 @@ export const Form = (props) => {
     const { id } = useParams();
 
     const onSetFormSearch = (searchUpdated) => {
-        console.log(searchUpdated);
         dispatch(setFormSearch(searchUpdated))
+    }
+
+    const onUpdateFormsSections = () => {
+        dispatch(updateSearch());
     }
 
     const handleSubmit = useCallback(
@@ -314,7 +317,7 @@ export const Form = (props) => {
 
                     <Divider />
                     <CardActions sx={{ justifyContent: 'flex-end' }}>
-                        <Button variant="contained">
+                        <Button variant="contained" onClick={onUpdateFormsSections}>
                             Salvar
                         </Button>
                     </CardActions>

@@ -21,3 +21,8 @@ export const getSearchByCode = async (code) => {
     const path = `${pathUrl}/searches/code/${code}`;
     return await axios.get(path);
 };
+
+export const updateSearchSections = async (id, params) => {
+    const path = `${pathUrl}/searches/${id}`;
+    return await axios.put(path, params);
+};

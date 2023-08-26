@@ -1,6 +1,6 @@
 
 import types from './constants';
-import  {getListSearches, createSearch, getSearchById} from '../../../services/search';
+import {getListSearches, createSearch, getSearchById, updateSearchSections} from '../../../services/search';
 
 export const setFormSearch = data => ({
     type: types.SET_FORM_SEARCH,
@@ -22,7 +22,7 @@ export const getSearch = (id) => (
     async (dispatch, getState) => {
 
         const response = await getSearchById(id);
-        dispatch(setFormSearch({...response.data, sections:[]}));
+        dispatch(setFormSearch(response.data));
     }
 );
 
@@ -40,5 +40,14 @@ export const createNewSearch = (params) => (
         const response = await createSearch(params);
         console.log(response);
         dispatch(setSearches([...searches, {...params, id:response.data}]));
+    }
+);
+
+export const updateSearch = (id, params) => (
+    async (dispatch, getState) => {
+        const state = getState();
+        const search = state.formSearch.search;
+        const response = await updateSearchSections(search.id,{ sections:search.sections });
+        console.log(response);
     }
 );
