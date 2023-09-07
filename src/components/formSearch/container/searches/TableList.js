@@ -158,8 +158,11 @@ export default function SearchesList() {
     }
 
     const editSearch = () => {
-        console.log(idSearch);
         navigate(`/dashboard/searches/edit/${idSearch}`);
+    }
+
+    const getResultSearch = () => {
+        navigate(`/dashboard/results/search/${idSearch}`);
     }
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - searches.length) : 0;
@@ -312,6 +315,11 @@ export default function SearchesList() {
                 <MenuItem onClick={editSearch}>
                     <Iconify icon={'eva:edit-fill'} sx={{mr: 2}}/>
                     Editar
+                </MenuItem>
+
+                <MenuItem onClick={getResultSearch}>
+                    <Iconify icon={"material-symbols:bar-chart"} sx={{mr: 2}}/>
+                    Resultados
                 </MenuItem>
 
                 <MenuItem sx={{color: 'error.main'}}>
