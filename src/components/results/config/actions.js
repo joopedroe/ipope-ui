@@ -1,4 +1,4 @@
-import {getResultField, getSearchById} from "../../../services/search";
+import {getResultField, getResultFieldMaps, getSearchById} from "../../../services/search";
 import types from "./constants";
 
 
@@ -12,6 +12,11 @@ const setResultField = data => ({
   payload: data
 });
 
+const setResultFieldMaps = data => ({
+  type: types.SET_RESULT_FIELD_MAPS,
+  payload: data
+});
+
 export const getSearch = (id) => (
   async (dispatch, getState) => {
 
@@ -22,14 +27,14 @@ export const getSearch = (id) => (
   }
 );
 
- const getResults = (data) => (
+const getResults = (data) => (
   async (dispatch, getState) => {
     for (const sections of data.sections) {
       for (const field of sections.fields) {
         try {
           const response = await getResultField(data.id, field.id);
           const resultField = []
-          response.data.names.map((name,index) => {
+          response.data.names.map((name, index) => {
             const result = {label: name, value: response.data.values[index]};
             resultField.push(result);
           })
@@ -38,6 +43,18 @@ export const getSearch = (id) => (
           console.error(`Erro ao requisitar: ${erro.message}`);
         }
       }
+    }
+  }
+);
+
+export const getResultsMaps = (data) => (
+  async (dispatch, getState) => {
+    try {
+      const response = await getResultFieldMaps(data.searchId, data.fieldId);
+
+      dispatch(setResultFieldMaps(response.data));
+    } catch (erro) {
+      console.error(`Erro ao requisitar: ${erro.message}`);
     }
   }
 );

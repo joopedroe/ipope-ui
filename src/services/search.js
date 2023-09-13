@@ -31,3 +31,8 @@ export const getResultField = async (search_id,response_id ) => {
     const path = `${pathUrl}/searches/${search_id}/responses/${response_id}`;
     return await axios.get(path);
 }
+
+export const getResultFieldMaps = async (search_id,response_id ) => {
+    const path = `${pathUrl}/searches/${search_id}/responses/${response_id}/details`;
+    return await axios.get(path);
+}

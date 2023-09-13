@@ -15,3 +15,10 @@ export const SET_RESULT_FIELD = (state, action) => {
     }
   });
 }
+
+export const SET_RESULT_FIELD_MAPS = (state, action) => {
+  return ({
+    ...state,
+    resultsMaps: action.payload,
+  });
+}

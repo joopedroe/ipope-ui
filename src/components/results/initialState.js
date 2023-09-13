@@ -5,5 +5,6 @@ export default ({
     city: '',
     sections:[]
   },
-  results:{}
+  results:{},
+  resultsMaps:[]
 });

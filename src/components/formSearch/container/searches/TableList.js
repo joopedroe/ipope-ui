@@ -165,6 +165,10 @@ export default function SearchesList() {
         navigate(`/dashboard/results/search/${idSearch}`);
     }
 
+    const getResultSearchMaps = () => {
+        navigate(`/dashboard/resultsMaps/search/${idSearch}`);
+    }
+
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - searches.length) : 0;
 
     const filteredSearches = applySortFilter(searches, getComparator(order, orderBy), filterName);
@@ -320,6 +324,11 @@ export default function SearchesList() {
                 <MenuItem onClick={getResultSearch}>
                     <Iconify icon={"material-symbols:bar-chart"} sx={{mr: 2}}/>
                     Resultados
+                </MenuItem>
+
+                <MenuItem onClick={getResultSearchMaps}>
+                    <Iconify icon={"pepicons-pop:map"} sx={{mr: 2}}/>
+                    Mapa
                 </MenuItem>
 
                 <MenuItem sx={{color: 'error.main'}}>

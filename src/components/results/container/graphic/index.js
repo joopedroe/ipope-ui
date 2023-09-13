@@ -22,9 +22,8 @@ export const Graphic = (props) => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const {field} = props;
-
+  const [typeGraphic, setTypeGraphic] = useState(field['options'].length > 3 ? 'bar' : 'pie');
   const data = useSelector(state => state.results.results[field.id]);
-  console.log('data', data)
 
 if(!data) return (
   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
@@ -35,7 +34,7 @@ if(!data) return (
   return (
     <>
     {
-      field['options'].length > 3 ? (
+      typeGraphic === 'bar' ? (
         <GraphicBar
           title={field.question}
           subheader="(+43%) than last year"
