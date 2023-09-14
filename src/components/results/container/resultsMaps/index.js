@@ -63,7 +63,7 @@ export const ResultsMaps = (props) => {
       //setLocation([fieldData[0].lat,fieldData[0].lgt]);
     }
     console.log('Colors',fieldSelected)
-    const data = fieldData.map(res=>({...res, color: { fillColor: fieldSelected[res.values[0]] }, name:res.values[0]}))
+    const data = fieldData.map(res=>({...res, color: fieldSelected[res.values[0]] , name:res.values[0]}))
     setResults(data)
   }, [fieldData])
 
@@ -111,6 +111,17 @@ export const ResultsMaps = (props) => {
         options={fields.map((field) => ({ label: field.question, value: field.id }))}
       />
 
+      <div style={{display:'flex', gap:'20px' }}>
+        {
+          fieldSelected && Object.keys(fieldSelected).map((item,index)=>(
+            <div style={{display:'flex', alignItems:'center', marginBottom:'10px', }}>
+              <div style={{width:'20px', height:'20px', backgroundColor:fieldSelected[item], marginRight:'10px'}}></div>
+              <span>{item}</span>
+            </div>
+          ))
+        }
+      </div>
+
     <MapContainer style={{ height: "600px" }}  center={location} zoom={13} scrollWheelZoom={false}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -119,7 +130,7 @@ export const ResultsMaps = (props) => {
       <LayerGroup>
         {
           results.map((item,index)=>(
-            <Circle center={[item.lat,item.lng]} pathOptions={item.color} radius={50} stroke={false} />
+            <Circle center={[item.lat,item.lng]} color={item.color} radius={10} stroke={true} />
           ))
         }
 
