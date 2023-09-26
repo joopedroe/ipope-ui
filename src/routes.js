@@ -15,13 +15,15 @@ import DashboardAppPage from './pages/DashboardAppPage';
 // ----------------------------------------------------------------------
 
 export default function Router() {
+
+  const authenticated = localStorage.getItem('token');
+
   const routes = useRoutes([
     {
       path: '/dashboard',
-      element: <DashboardLayout />,
+      element: !authenticated ? <LoginPage /> : <DashboardLayout />,
       children: [
-        { element: <Navigate to="/dashboard/app" />, index: true },
-        { path: 'app', element: <DashboardAppPage /> },
+        { element: !authenticated ? <LoginPage /> :  <Navigate to="/dashboard/searches" />, index: true },
         { path: 'searches', element: <SearchesList /> },
         { path: 'searches/edit/:id', element: <NewSearch /> },
         { path: 'results/search/:id', element: <Results /> },
@@ -36,7 +38,7 @@ export default function Router() {
     {
       element: <SimpleLayout />,
       children: [
-        { element: <Navigate to="/dashboard/app" />, index: true },
+        { element: <Navigate to="/login" />, index: true },
         { path: '404', element: <Page404 /> },
         { path: '*', element: <Navigate to="/404" /> },
       ],

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // @mui
-import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox } from '@mui/material';
+import {Link, Stack, IconButton, InputAdornment, TextField, Checkbox, Snackbar, Alert} from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../../components/iconify';
@@ -12,20 +12,34 @@ export default function LoginForm() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
-
-  const handleClick = () => {
-    navigate('/dashboard', { replace: true });
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [open, setOpen] = useState(false);
+  const handleLogin = () => {
+    if (username === process.env.REACT_APP_USER && password === process.env.REACT_APP_PASSWORD) {
+      const token = 'seu-token-de-autenticacao';
+      localStorage.setItem('token', token);
+      navigate('/dashboard', { replace: true });
+    } else {
+      setOpen(true);
+    }
   };
+
+  const handleClose = ( ) => {
+    setOpen(false);
+  }
 
   return (
     <>
       <Stack spacing={3}>
-        <TextField name="email" label="Email address" />
+        <TextField required={true} name="user" label="Usuário" onChange={(event)=>setUsername(event.target.value)} />
 
         <TextField
           name="password"
-          label="Password"
+          label="Senha"
           type={showPassword ? 'text' : 'password'}
+          onChange={(event)=>setPassword(event.target.value)}
+          required={true}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -38,16 +52,15 @@ export default function LoginForm() {
         />
       </Stack>
 
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-        <Checkbox name="remember" label="Remember me" />
-        <Link variant="subtitle2" underline="hover">
-          Forgot password?
-        </Link>
-      </Stack>
-
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick}>
-        Login
+      <LoadingButton sx={{marginTop:'30px'}} fullWidth size="large" type="submit" variant="contained" onClick={handleLogin}>
+        Entrar
       </LoadingButton>
+
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+        <Alert onClose={handleClose} severity="error">
+          Credenciais inválidas!
+        </Alert>
+      </Snackbar>
     </>
   );
 }
