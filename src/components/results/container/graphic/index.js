@@ -22,8 +22,10 @@ export const Graphic = (props) => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const {field} = props;
-  const [typeGraphic, setTypeGraphic] = useState(field['options'].length > 3 ? 'bar' : 'pie');
   const data = useSelector(state => state.results.results[field.id]);
+  const dataList = data || [];
+
+  const typeGraphic = dataList.length > 2 ? 'bar' : 'pie'
 
 if(!data) return (
   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>

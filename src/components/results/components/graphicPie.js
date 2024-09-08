@@ -8,70 +8,71 @@ import { fNumber } from '../../../utils/formatNumber';
 // components
 import { useChart } from '../../../components/chart';
 
-// ----------------------------------------------------------------------
+import React from 'react';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
+import exporting from 'highcharts/modules/exporting';
 
-const CHART_HEIGHT = 372;
-const LEGEND_HEIGHT = 72;
+exporting(Highcharts);
 
-const StyledChartWrapper = styled('div')(({ theme }) => ({
-  height: CHART_HEIGHT,
-  marginTop: theme.spacing(5),
-  '& .apexcharts-canvas svg': { height: CHART_HEIGHT },
-  '& .apexcharts-canvas svg,.apexcharts-canvas foreignObject': {
-    overflow: 'visible',
-  },
-  '& .apexcharts-legend': {
-    height: LEGEND_HEIGHT,
-    alignContent: 'center',
-    position: 'relative !important',
-    borderTop: `solid 1px ${theme.palette.divider}`,
-    top: `calc(${CHART_HEIGHT - LEGEND_HEIGHT}px) !important`,
-  },
-}));
+const PieChart = ({ title, subheader, chartColors, chartData, ...other }) => {
 
-// ----------------------------------------------------------------------
+  const totalValue = chartData.reduce((total, item) => total + item.value, 0);
 
-GraphicPie.propTypes = {
-  title: PropTypes.string,
-  subheader: PropTypes.string,
-  chartColors: PropTypes.arrayOf(PropTypes.string),
-  chartData: PropTypes.array,
-};
+  const chartLabels = chartData.map((i) => ({
+    name: i.label,
+    y: Number(((i.value *100)/ totalValue).toFixed(1))
+  }));
 
-export default function GraphicPie({ title, subheader, chartColors, chartData, ...other }) {
-  const theme = useTheme();
 
-  const chartLabels = chartData.map((i) => i.label);
-
-  const chartSeries = chartData.map((i) => i.value);
-
-  const chartOptions = useChart({
-    colors: chartColors,
-    labels: chartLabels,
-    stroke: { colors: [theme.palette.background.paper] },
-    legend: { floating: true, horizontalAlign: 'center' },
-    dataLabels: { enabled: true, dropShadow: { enabled: false } },
-    tooltip: {
-      fillSeriesColor: false,
-      y: {
-        formatter: (seriesName) => fNumber(seriesName),
-        title: {
-          formatter: (seriesName) => `${seriesName}`,
-        },
-      },
+  const options = {
+    chart: {
+      type: 'pie'
+    },
+    title: {
+      text: title
     },
     plotOptions: {
-      pie: { donut: { labels: { show: false } } },
+      series: {
+        allowPointSelect: true,
+        cursor: 'pointer',
+        dataLabels: [{
+          enabled: true,
+          distance: 20
+        }, {
+          enabled: true,
+          distance: -40,
+          format: '{point.percentage:.1f}%',
+          style: {
+            fontSize: '1.2em',
+            textOutline: 'none',
+            opacity: 0.7
+          },
+          filter: {
+            operator: '>',
+            property: 'percentage',
+            value: 10
+          }
+        }]
+      }
     },
-  });
+    series: [
+      {
+        name: 'Porcentagem',
+        data: chartLabels
+      }
+    ],
+    credits: {
+      enabled: false
+    }
+  };
 
   return (
     <Card {...other}>
-      <CardHeader title={title} subheader={subheader} />
-
-      <StyledChartWrapper dir="ltr">
-        <ReactApexChart type="pie" series={chartSeries} options={chartOptions} height={280} />
-      </StyledChartWrapper>
+      <HighchartsReact highcharts={Highcharts} options={options} />
     </Card>
   );
-}
+};
+
+export default PieChart;
+

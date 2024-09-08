@@ -1,67 +1,81 @@
 import PropTypes from 'prop-types';
-import ReactApexChart from 'react-apexcharts';
+import React from 'react';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
+import exporting from 'highcharts/modules/exporting';
+import { getColorByName } from '../../../utils'
 // @mui
-import { Card, CardHeader, Box } from '@mui/material';
-// components
-import { useChart } from '../../../components/chart';
-import {fNumber} from "../../../utils/formatNumber";
-import {useTheme} from "@mui/material/styles";
+import { Card } from '@mui/material';
 
-// ----------------------------------------------------------------------
+exporting(Highcharts);
 
-GraphicBar.propTypes = {
-  title: PropTypes.string,
-  subheader: PropTypes.string,
-  chartData: PropTypes.array.isRequired,
-  chartColors: PropTypes.arrayOf(PropTypes.string).isRequired,
-};
+const ColumnChart = ({ title, subheader, chartColors, chartData, ...other }) => {
 
-export default function GraphicBar({ title, subheader, chartData, chartColors, ...other }) {
+  // Calcula o total de valores
+  const totalValue = chartData.reduce((total, item) => total + item.value, 0);
 
-  const theme = useTheme();
+  // Mapeia os dados para o formato do gráfico
+  const chartLabels = chartData.map((i, index) => ({
+    name: i.label,
+    data: [Number(((i.value *100)/ totalValue).toFixed(1))],
+    color: getColorByName(i.label) || chartColors[index]
+  }));
 
-  const chartLabels = chartData.map((i) => i.label);
-
-  const chartSeries = chartData.map((i) => i.value);
-
-  const chartOptions = useChart({
-    labels: chartLabels,
-    colors:chartColors,
-    legend: { floating: true, horizontalAlign: 'center' },
-    dataLabels: { enabled: true, dropShadow: { enabled: false } },
-    tooltip: {
-      fillSeriesColor: false,
-      y: {
-        formatter: (seriesName) => fNumber(seriesName),
-        title: {
-          formatter: (seriesName) => `${seriesName}`,
-        },
-      },
+  // Configuração do gráfico de colunas
+  const options = {
+    chart: {
+      type: 'column' // Define como gráfico de colunas
     },
-    xaxis: {
-      categories: chartLabels,
+    title: {
+      text: title
+    },
+    xAxis: {
+      categories: [''], // Define as categorias no eixo X
+      title: {
+        text: null
+      }
+    },
+    yAxis: {
+      min: 0,
+      title: {
+        text: 'Valor'
+      },
       labels: {
-        style: {
-          colors: chartColors,
-          fontSize: '12px'
-        }
+        overflow: 'justify'
       }
     },
     plotOptions: {
-      bar: {
-        columnWidth: '45%',
-        distributed: true
-      },
+      column: {
+        dataLabels: {
+          enabled: true,
+          formatter: function() {
+            // Formata para exibir o valor e a porcentagem
+            return `${this.y} %`;
+          }
+        }
+      }
     },
-  });
+    series: chartLabels,
+    credits: {
+      enabled: false // Desativa os créditos
+    },
+    exporting: {
+      enabled: true // Habilita a exportação do gráfico
+    }
+  };
 
   return (
     <Card {...other}>
-      <CardHeader title={title} subheader={subheader} />
-
-      <Box sx={{ p: 3, pb: 1 }} dir="ltr">
-        <ReactApexChart type="bar" series={[{data:chartSeries}]} options={chartOptions} height={364} />
-      </Box>
+      <HighchartsReact highcharts={Highcharts} options={options} />
     </Card>
   );
-}
+};
+
+ColumnChart.propTypes = {
+  title: PropTypes.string,
+  subheader: PropTypes.string,
+  chartColors: PropTypes.array,
+  chartData: PropTypes.array.isRequired,
+};
+
+export default ColumnChart;
