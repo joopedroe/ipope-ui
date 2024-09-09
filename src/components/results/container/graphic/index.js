@@ -5,17 +5,12 @@ import {
 } from '@mui/material';
 import {getSearch} from "../../config/actions";
 import {useDispatch, useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPenToSquare, faTrashAlt} from "@fortawesome/free-regular-svg-icons";
-import {InputActions} from "../../../formSearch/container/style";
-import {Button as ButtonAntd} from "antd";
-import {faXmark} from "@fortawesome/free-solid-svg-icons";
-import Icon from "../../../iconify/Iconify";
 import GraphicBar from "../../components/graphicBar";
 import GraphicPie from "../../components/graphicPie";
+import GraphicBarMultipleData from "../../components/graphicBarMultipleData";
 import CircularProgress from '@mui/material/CircularProgress';
 import {useTheme} from "@mui/material/styles";
+import { colors } from "../../../../constants/colors"
 
 
 export const Graphic = (props) => {
@@ -25,41 +20,69 @@ export const Graphic = (props) => {
   const data = useSelector(state => state.results.results[field.id]);
   const dataList = data || [];
 
-  const typeGraphic = dataList.length > 2 ? 'bar' : 'pie'
+  let typeGraphic = dataList.length > 2 ? 'bar' : 'pie';
+
 
 if(!data) return (
   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
     <CircularProgress />
   </Box>
 )
+  if(data && data.length > 6){
+    typeGraphic = 'barMultipleData'
+  }
+
+  const renderGraphic = () => {
+    switch (typeGraphic){
+      case 'bar':
+        return (
+          <GraphicBar
+            title={field.question}
+            chartData={data}
+            chartColors={[
+              theme.palette.primary.main,
+              theme.palette.warning.main,
+              theme.palette.info.main,
+              theme.palette.error.main,
+              ...colors
+            ]}
+          />
+        )
+      case 'pie':
+        return (
+          <GraphicPie
+            title={field.question}
+            chartData={data}
+            chartColors={[
+              theme.palette.primary.main,
+              theme.palette.warning.main,
+              theme.palette.info.main,
+              theme.palette.error.main,
+              ...colors
+            ]}
+          />
+        )
+      case 'barMultipleData':
+        return (
+          <GraphicBarMultipleData
+            title={field.question}
+            chartData={data}
+            chartColors={[
+              theme.palette.primary.main,
+              theme.palette.warning.main,
+              theme.palette.info.main,
+              theme.palette.error.main,
+              ...colors
+            ]}
+          />
+        )
+    }
+  }
 
   return (
     <>
     {
-      typeGraphic === 'bar' ? (
-        <GraphicBar
-          title={field.question}
-          subheader="(+43%) than last year"
-          chartData={data}
-          chartColors={[
-            theme.palette.primary.main,
-            theme.palette.warning.main,
-            theme.palette.info.main,
-            theme.palette.error.main,
-          ]}
-        />
-      ) : (
-        <GraphicPie
-          title={field.question}
-          chartData={data}
-          chartColors={[
-            theme.palette.primary.main,
-            theme.palette.warning.main,
-            theme.palette.info.main,
-            theme.palette.error.main,
-          ]}
-        />
-      )
+      renderGraphic()
     }
     </>
   );
