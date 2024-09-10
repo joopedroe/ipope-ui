@@ -22,13 +22,35 @@ export const Graphic = (props) => {
 
   let typeGraphic = dataList.length > 2 ? 'bar' : 'pie';
 
+  let dataGraphich = data;
 
-if(!data) return (
+  const primaryOption = field.options[0] ? field.options[0].value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
+
+  if(field.dataType === 2 && (primaryOption === 'otimo' || primaryOption === 'otima')){
+    const dataObjetc = {};
+    dataList.forEach((item) => {
+      dataObjetc[item.label] = item.value;
+    });
+
+    const dataOrder = [];
+    field.options.forEach((item) => {
+      dataOrder.push({
+        label: item.value,
+        value: dataObjetc[item.value] || 0
+      });
+    });
+
+    dataGraphich = dataOrder;
+
+  }
+
+
+if(!dataGraphich) return (
   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
     <CircularProgress />
   </Box>
 )
-  if(data && data.length > 6){
+  if(dataGraphich && dataGraphich.length > 6){
     typeGraphic = 'barMultipleData'
   }
 
@@ -38,7 +60,7 @@ if(!data) return (
         return (
           <GraphicBar
             title={field.question}
-            chartData={data}
+            chartData={dataGraphich}
             chartColors={[
               theme.palette.primary.main,
               theme.palette.warning.main,
@@ -52,7 +74,7 @@ if(!data) return (
         return (
           <GraphicPie
             title={field.question}
-            chartData={data}
+            chartData={dataGraphich}
             chartColors={[
               theme.palette.primary.main,
               theme.palette.warning.main,
@@ -66,7 +88,7 @@ if(!data) return (
         return (
           <GraphicBarMultipleData
             title={field.question}
-            chartData={data}
+            chartData={dataGraphich}
             chartColors={[
               theme.palette.primary.main,
               theme.palette.warning.main,

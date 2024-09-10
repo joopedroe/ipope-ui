@@ -115,7 +115,6 @@ export const Form = (props) => {
         };
         const sectionIndex = searchUpdated.sections.findIndex((section) => section.id === sectionIdSelected);
         if (sectionIndex >= 0) {
-            console.log('add field');
             const newSearch = {
                 ...searchUpdated,
                 sections: searchUpdated.sections.map((section) => {
@@ -131,6 +130,7 @@ export const Form = (props) => {
             }
             onSetFormSearch(newSearch);
         }
+        onUpdateFormsSections();
     };
 
     useEffect(() => {
