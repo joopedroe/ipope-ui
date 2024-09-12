@@ -26,7 +26,7 @@ export const Graphic = (props) => {
 
   const primaryOption = field.options[0] ? field.options[0].value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
 
-  if(field.dataType === 2 && (primaryOption === 'otimo' || primaryOption === 'otima')){
+  if(field.dataType === 2){
     const dataObjetc = {};
     dataList.forEach((item) => {
       dataObjetc[item.label] = item.value;

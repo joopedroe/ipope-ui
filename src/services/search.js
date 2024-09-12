@@ -36,3 +36,8 @@ export const getResultFieldMaps = async (search_id,response_id ) => {
     const path = `${pathUrl}/searches/${search_id}/responses/${response_id}/details`;
     return await axios.get(path);
 }
+
+export const duplicateSearchById = async (search_id ) => {
+    const path = `${pathUrl}/searches/${search_id}/duplicate`;
+    return await axios.post(path);
+}

@@ -3,6 +3,7 @@ import {filter} from 'lodash';
 import {sentenceCase} from 'change-case';
 import {useNavigate} from 'react-router-dom';
 import {useEffect, useState} from 'react';
+import { format } from 'date-fns';
 // @mui
 import {
     Card,
@@ -29,13 +30,14 @@ import Scrollbar from '../../../scrollbar';
 import {SearchListHead, SearchListToolbar} from '../../../../sections/@dashboard/searches';
 // mock
 import DialogNewSearch from "../../components/dialogs/DialogNewSearch";
-import { getSearches } from '../../config/actions';
+import { getSearches, duplicateSearch } from '../../config/actions';
 import {useSelector, useDispatch} from "react-redux";
 
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
+    {id: 'created_at', label: 'Criado', alignRight: false},
     {id: 'name', label: 'Nome', alignRight: false},
     {id: 'company', label: 'Código', alignRight: false},
     {id: 'role', label: 'Cidade', alignRight: false},
@@ -80,11 +82,11 @@ export default function SearchesList() {
 
     const [page, setPage] = useState(0);
 
-    const [order, setOrder] = useState('asc');
+    const [order, setOrder] = useState('desc');
 
     const [selected, setSelected] = useState([]);
 
-    const [orderBy, setOrderBy] = useState('name');
+    const [orderBy, setOrderBy] = useState('created_at');
 
     const [filterName, setFilterName] = useState('');
 
@@ -92,15 +94,18 @@ export default function SearchesList() {
 
     const [openDialogNewSearch, setOpenDialogNewSearch] = useState(false);
 
+    const [dataEdit, setDataEdit] = useState({});
+
     const [idSearch, setIdSearch] = useState(null);
 
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
 
-    const handleOpenMenu = (event, id) => {
+    const handleOpenMenu = (event, data) => {
         setOpen(event.currentTarget);
-        setIdSearch(id);
+        setIdSearch(data.id);
+        setDataEdit(data)
     };
 
     const searches = useSelector(state => state.formSearch.searches);
@@ -157,6 +162,11 @@ export default function SearchesList() {
         setOpenDialogNewSearch(false);
     }
 
+    const handleOpenDialogEditSearch = () => {
+        setOpenDialogNewSearch(true);
+        setDataEdit({isEdit: true, ...dataEdit})
+    }
+
     const editSearch = () => {
         navigate(`/dashboard/searches/edit/${idSearch}`);
     }
@@ -167,6 +177,11 @@ export default function SearchesList() {
 
     const getResultSearchMaps = () => {
         navigate(`/dashboard/resultsMaps/search/${idSearch}`);
+    }
+
+    const setDuplicateSearch = () => {
+        dispatch(duplicateSearch(idSearch));
+        handleCloseMenu();
     }
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - searches.length) : 0;
@@ -211,16 +226,14 @@ export default function SearchesList() {
                                 />
                                 <TableBody>
                                     {filteredSearches.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                                        const {id, name, code, city, state, status} = row;
+                                        const {id, name, code, city, state, status, created_at} = row;
                                         const selectedUser = selected.indexOf(name) !== -1;
 
                                         return (
                                             <TableRow hover key={id} tabIndex={-1} role="checkbox"
                                                       selected={selectedUser}>
-                                                <TableCell padding="checkbox">
-                                                    {/*
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
-                            */}
+                                                <TableCell >
+                                                    {format(new Date(created_at), 'dd/MM/yyyy')}
                                                 </TableCell>
 
                                                 <TableCell component="th" scope="row" padding="none">
@@ -244,7 +257,7 @@ export default function SearchesList() {
 
                                                 <TableCell align="right">
                                                     <IconButton size="large" color="inherit" onClick={(event) => {
-                                                        handleOpenMenu(event, id)
+                                                        handleOpenMenu(event, {id, name, code, city, state, status})
                                                     }}>
                                                         <Iconify icon={'eva:more-vertical-fill'}/>
                                                     </IconButton>
@@ -321,9 +334,19 @@ export default function SearchesList() {
                     Editar
                 </MenuItem>
 
+                <MenuItem onClick={handleOpenDialogEditSearch}>
+                    <Iconify icon={'eva:edit-fill'} sx={{mr: 2}}/>
+                    Editar Nome
+                </MenuItem>
+
                 <MenuItem onClick={getResultSearch}>
                     <Iconify icon={"material-symbols:bar-chart"} sx={{mr: 2}}/>
                     Resultados
+                </MenuItem>
+
+                <MenuItem onClick={setDuplicateSearch}>
+                    <Iconify icon="ion:duplicate-outline" sx={{mr: 2}}/>
+                    Duplicar
                 </MenuItem>
 
                 <MenuItem onClick={getResultSearchMaps}>
@@ -340,6 +363,7 @@ export default function SearchesList() {
             <DialogNewSearch
                 open={openDialogNewSearch}
                 handleClose={handleCloseDialogNewSearch}
+                dataEdit={dataEdit}
             />
         </>
     );

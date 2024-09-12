@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -11,11 +11,11 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 
-import { createNewSearch} from '../../config/actions';
+import { createNewSearch, updateNameSearch} from '../../config/actions';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 
-const CreateSurveyDialog = ({open, handleClose}) => {
+const CreateSurveyDialog = ({open, handleClose, dataEdit}) => {
 
     const dispatch = useDispatch();
     
@@ -57,6 +57,17 @@ const CreateSurveyDialog = ({open, handleClose}) => {
         type: '',
     });
 
+    useEffect(() => {
+        if(dataEdit && dataEdit.isEdit){
+            setFormData({
+                name: dataEdit.name,
+                city: dataEdit.city,
+                state: dataEdit.state,
+                type: dataEdit.type
+            })
+        }
+    }, [dataEdit])
+
 
     const handleInputChange = (event) => {
         const {name, value} = event.target;
@@ -68,18 +79,25 @@ const CreateSurveyDialog = ({open, handleClose}) => {
 
     const handleCreateSurvey = () => {
 
-        const newSearch = {
-            ...formData,
-            sections: [],
+        if(dataEdit.isEdit){
+            const newSearch = {
+                ...formData,
+            }
+            dispatch(updateNameSearch(dataEdit.id, newSearch));
+        } else {
+            const newSearch = {
+                ...formData,
+                sections: [],
+            }
+            dispatch(createNewSearch(newSearch));
         }
-        dispatch(createNewSearch(newSearch));
         handleClose();
     };
 
     return (
         <div>
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Criar Pesquisa</DialogTitle>
+                <DialogTitle>{ dataEdit.isEdit ? 'Atualizar Pesquisa' : 'Criar Pesquisa'}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>Preencha os detalhes da pesquisa:</DialogContentText>
                     <TextField
@@ -129,7 +147,7 @@ const CreateSurveyDialog = ({open, handleClose}) => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancelar</Button>
-                    <Button onClick={handleCreateSurvey}>Criar</Button>
+                    <Button onClick={handleCreateSurvey}>{ dataEdit.isEdit ? 'Atualizar' : 'Criar'} </Button>
                 </DialogActions>
             </Dialog>
         </div>

@@ -11,6 +11,7 @@ import ThemeProvider from './theme';
 import { StyledChart } from './components/chart';
 import ScrollToTop from './components/scroll-to-top';
 
+import SnackBar from './components/SnackBar';
 // ----------------------------------------------------------------------
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
             <ScrollToTop />
             <StyledChart />
             <Router />
+            <SnackBar />
           </ThemeProvider>
         </BrowserRouter>
       </HelmetProvider>

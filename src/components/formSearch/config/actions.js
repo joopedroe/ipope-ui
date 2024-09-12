@@ -1,6 +1,6 @@
 
 import types from './constants';
-import {getListSearches, createSearch, getSearchById, updateSearchSections} from '../../../services/search';
+import {getListSearches, createSearch, getSearchById, updateSearchSections, duplicateSearchById} from '../../../services/search';
 
 export const setFormSearch = data => ({
     type: types.SET_FORM_SEARCH,
@@ -17,6 +17,11 @@ export const setSearches = data => ({
     payload: data
 });
 
+export const showSnackbar = data => ({
+    type: types.SNACKBAR_SHOW,
+     payload: data 
+})
+
 
 export const getSearch = (id) => (
     async (dispatch, getState) => {
@@ -25,6 +30,27 @@ export const getSearch = (id) => (
         dispatch(setFormSearch(response.data));
     }
 );
+
+export const duplicateSearch = (id) => (
+    async (dispatch, getState) => {
+        try {
+            const response = await duplicateSearchById(id);
+            dispatch(getSearches());
+            dispatch(showSnackbar({
+                message: 'Duplicado com sucesso!',
+                autoHideDuration: 1500,
+                variant: 'success'
+            }));
+        } catch (error) {
+            dispatch(showSnackbar({
+                message: 'Erro ao duplicar!',
+                autoHideDuration: 1500,
+                variant: 'error'
+            }));
+        }
+    }
+);
+
 
 export const getSearches = () => (
     async (dispatch, getState) => {
@@ -43,6 +69,27 @@ export const createNewSearch = (params) => (
     }
 );
 
+export const updateNameSearch = (id, params) => (
+    async (dispatch, getState) => {
+        try {
+            const response = await updateSearchSections(id, params);
+            dispatch(getSearches());
+            dispatch(showSnackbar({
+                message: 'Atualizado com sucesso!',
+                autoHideDuration: 1500,
+                variant: 'success'
+            }));
+        } catch (error) {
+            dispatch(showSnackbar({
+                message: 'Erro ao duplicar!',
+                autoHideDuration: 1500,
+                variant: 'error'
+            }));
+        }
+        
+    }
+);
+
 export const updateSearch = (id, params) => (
     async (dispatch, getState) => {
         const state = getState();
@@ -51,3 +98,11 @@ export const updateSearch = (id, params) => (
         console.log(response);
     }
 );
+
+let timeout = null;
+
+export const hideSnackbar = () => (dispatch, getState, api) => {
+  clearTimeout(timeout);
+  dispatch(({ type: types.SNACKBAR_HIDE }));
+};
+
