@@ -30,7 +30,7 @@ import Scrollbar from '../../../scrollbar';
 import {SearchListHead, SearchListToolbar} from '../../../../sections/@dashboard/searches';
 // mock
 import DialogNewSearch from "../../components/dialogs/DialogNewSearch";
-import { getSearches, duplicateSearch } from '../../config/actions';
+import { getSearches, duplicateSearch, deleteSearch } from '../../config/actions';
 import {useSelector, useDispatch} from "react-redux";
 
 
@@ -177,6 +177,11 @@ export default function SearchesList() {
 
     const getResultSearchMaps = () => {
         navigate(`/dashboard/resultsMaps/search/${idSearch}`);
+    }
+
+    const onDeleteSearch = () => {
+        dispatch(deleteSearch(idSearch));
+        handleCloseMenu();
     }
 
     const setDuplicateSearch = () => {
@@ -354,7 +359,7 @@ export default function SearchesList() {
                     Mapa
                 </MenuItem>
 
-                <MenuItem sx={{color: 'error.main'}}>
+                <MenuItem onClick={onDeleteSearch} sx={{color: 'error.main'}}>
                     <Iconify icon={'eva:trash-2-outline'} sx={{mr: 2}}/>
                     Excluir
                 </MenuItem>

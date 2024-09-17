@@ -27,6 +27,11 @@ export const updateSearchSections = async (id, params) => {
     return await axios.put(path, params);
 };
 
+export const deleteSearchById = async (id) => {
+    const path = `${pathUrl}/searches/${id}`;
+    return await axios.delete(path);
+};
+
 export const getResultField = async (search_id,response_id ) => {
     const path = `${pathUrl}/searches/${search_id}/responses/${response_id}`;
     return await axios.get(path);

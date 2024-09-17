@@ -81,7 +81,7 @@ export const Form = (props) => {
 
     const addField = (data) => {
         const searchUpdated = { ...search };
-        if(data.id) {
+        if (data.id) {
             const sectionIndex = searchUpdated.sections.findIndex((section) => section.id === data.sectionId);
             const newSearch = {
                 ...searchUpdated,
@@ -134,7 +134,7 @@ export const Form = (props) => {
     };
 
     useEffect(() => {
-        if(id){
+        if (id) {
             dispatch(getSearch(id));
         }
     }, [])
@@ -163,6 +163,14 @@ export const Form = (props) => {
     };
 
     const CheckboxRadioField = (field) => {
+        if (!field.options) {
+            return (
+                <Typography variant="body1" gutterBottom>
+                    {field.question}
+                </Typography>
+            )
+
+        }
         return (
             <>
                 <Typography variant="body1" gutterBottom>
@@ -212,7 +220,7 @@ export const Form = (props) => {
                     label="Resposta"
                     disabled={true}
                     fullWidth
-                    sx={{marginTop: '2px'}}
+                    sx={{ marginTop: '2px' }}
                     margin="normal"
                 />
 
@@ -224,11 +232,11 @@ export const Form = (props) => {
             case 1:
             case 2:
             case 4:
-            return CheckboxRadioField(field);
+                return CheckboxRadioField(field);
             case 3:
-            return TextFieldInput(field);
+                return TextFieldInput(field);
 
-            }
+        }
     }
 
     return (
@@ -273,21 +281,21 @@ export const Form = (props) => {
                                                                 >
                                                                     <FontAwesomeIcon icon={faPenToSquare} />
                                                                 </ButtonAntd>
-                                                                <ButtonAntd 
+                                                                <ButtonAntd
                                                                     shape='circle'
                                                                     onClick={() => removeField(section.id, field.id)}
-                                                                     >
+                                                                >
                                                                     <FontAwesomeIcon icon={faXmark} />
                                                                 </ButtonAntd>
                                                             </InputActions>
                                                             {
                                                                 renderField(field)
                                                             }
-                                                            </Box >                                                          
-                                                        )
+                                                        </Box >
+                                                    )
                                                     )
                                                 }
-                                                        
+
                                             </Grid>
 
                                             <Grid item xs={12}>

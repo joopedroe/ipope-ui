@@ -1,6 +1,8 @@
-
+import { Modal } from 'antd';
 import types from './constants';
-import {getListSearches, createSearch, getSearchById, updateSearchSections, duplicateSearchById} from '../../../services/search';
+import {getListSearches, createSearch, getSearchById, updateSearchSections, duplicateSearchById, deleteSearchById } from '../../../services/search';
+
+const ModalConfirm = Modal.confirm;
 
 export const setFormSearch = data => ({
     type: types.SET_FORM_SEARCH,
@@ -96,6 +98,30 @@ export const updateSearch = (id, params) => (
         const search = state.formSearch.search;
         const response = await updateSearchSections(search.id,{ sections:search.sections });
         console.log(response);
+    }
+);
+
+export const deleteSearch = (id) => (
+    async (dispatch, getState) => {
+        const state = getState();
+        ModalConfirm({
+            centered: true,
+            maskClosable: true,
+            title: 'Atenção',
+            content: `Tem certeza de que deseja excluir esta pesquisa?`,
+            cancelText: 'Cancelar',
+            okText: 'Excluir',
+            onOk: async () => {
+                await deleteSearchById(id);
+                const searches = state.formSearch.searches;
+                const newSearches = searches.filter((item) => item.id !== id);
+                dispatch(setSearches(newSearches));
+            },
+            onCancel: () => {
+              return;
+            },
+          });
+
     }
 );
 
