@@ -3,16 +3,19 @@ import {
 
   Box, Button, IconButton, SvgIcon, Typography, Unstable_Grid2 as Grid,
 } from '@mui/material';
-import {getSearch} from "../../config/actions";
+import {getSearch, getSectors, getResults} from "../../config/actions";
 import {useDispatch, useSelector} from "react-redux";
 import {useParams} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPenToSquare, faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {InputActions} from "../../../formSearch/container/style";
-import {Button as ButtonAntd} from "antd";
+import {Select} from "antd";
 import {faXmark} from "@fortawesome/free-solid-svg-icons";
 import Icon from "../../../iconify/Iconify";
-import { Graphic } from "../graphic"
+import { Graphic } from "../graphic";
+
+
+const { Options } = Select;
 
 
 export const Results = (props) => {
@@ -20,6 +23,15 @@ export const Results = (props) => {
   const {id} = useParams();
 
   const search = useSelector(state => state.results.searchResult);
+  const sectors = useSelector(state => state.results.sectors);
+
+  const sectorsList = sectors || [];
+  const sectorsOptions =[ { label: 'TODOS', value: 0 },  ...sectorsList.map((sector) => ({ label: sector, value: sector }))]
+
+  const onChangeSelectSecto = (value) => {
+    dispatch(getResults(search, value))
+  }
+
 
 
   const renderField = (field) => {
@@ -35,12 +47,23 @@ export const Results = (props) => {
   useEffect(() => {
     if (id) {
       dispatch(getSearch(id));
+      dispatch(getSectors(id));
     }
   }, [])
 
   return (
     <Box>
       <h1>{search.name}</h1>
+      <Grid item xs={12}>
+              <Select
+                showSearch
+                style={{width: 200}}
+                placeholder="Selecione o setor"
+                onChange={onChangeSelectSecto}
+                options={sectorsOptions}
+                >
+                </Select>
+            </Grid>
       {search.sections.map((section) => (
         <Box component="div" key={section.id}
              sx={{ borderRadius: '15px', margin: '10px 10px'}}>

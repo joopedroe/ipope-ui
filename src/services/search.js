@@ -32,8 +32,13 @@ export const deleteSearchById = async (id) => {
     return await axios.delete(path);
 };
 
-export const getResultField = async (search_id,response_id ) => {
-    const path = `${pathUrl}/searches/${search_id}/responses/${response_id}`;
+export const getResultField = async (search_id,response_id, sector) => {
+    const path = `${pathUrl}/searches/${search_id}/responses/${response_id}${sector ? `?sector=${sector}` : '' }`;
+    return await axios.get(path);
+}
+
+export const getSectorsSearch = async (search_id) => {
+    const path = `${pathUrl}/searches/${search_id}/sectors`;
     return await axios.get(path);
 }
 

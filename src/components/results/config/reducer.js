@@ -22,3 +22,10 @@ export const SET_RESULT_FIELD_MAPS = (state, action) => {
     resultsMaps: action.payload,
   });
 }
+
+export const SET_SECTORS_SEARCH = (state, action) => {
+  return ({
+    ...state,
+    sectors: action.payload,
+  });
+}
